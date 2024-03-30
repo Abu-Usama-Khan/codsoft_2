@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:quote_of_the_day_app/favQuotes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:share_plus/share_plus.dart';
+import 'package:share/share.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -21,6 +21,14 @@ class _HomeScreenState extends State<HomeScreen> {
     tempList.add([quote, author]);
     String sendStr = json.encode(tempList);
     await pref.setString('quotesString', sendStr);
+    final snackBar = SnackBar(
+      content: Text(
+        'Saved to Favourite',
+        style: TextStyle(color: Colors.black),
+      ),
+      backgroundColor: Colors.amber,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Future getQuote() async {
@@ -43,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Quote of the day App'),
+          elevation: 20,
           actions: [
             IconButton(
                 onPressed: () => Navigator.push(
@@ -93,13 +102,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                IconButton(
-                                    onPressed: () => Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => HomeScreen(),
-                                        )),
-                                    icon: Icon(Icons.arrow_forward)),
+                                Container(
+                                  color: Colors.amber[200],
+                                  child: IconButton(
+                                      onPressed: () =>
+                                          Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    HomeScreen(),
+                                              )),
+                                      icon: Icon(Icons.arrow_forward)),
+                                ),
                               ],
                             ),
                           ),
@@ -107,12 +121,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
+                                  style: ButtonStyle(
+                                      elevation: MaterialStatePropertyAll(20)),
                                   onPressed: () => saveQuote(
                                       snapshot.data[0]['quote'],
                                       snapshot.data[0]['author']),
                                   child: Text('Save this Quote')),
                               ElevatedButton(
-                                  onPressed: () {},
+                                  style: ButtonStyle(
+                                      elevation: MaterialStatePropertyAll(20)),
+                                  onPressed: () {
+                                    Share.share(
+                                        'Hey checkout this amazing quote: \'' +
+                                            snapshot.data[0]['quote'] +
+                                            '\'' +
+                                            ' (by ' +
+                                            snapshot.data[0]['author'] +
+                                            ')');
+                                  },
                                   child: Text('Share this Quote'))
                             ],
                           )

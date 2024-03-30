@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FavQuotes extends StatefulWidget {
@@ -10,7 +11,7 @@ class FavQuotes extends StatefulWidget {
 }
 
 class _FavQuotesState extends State<FavQuotes> {
-  List? favQuotes;
+  List favQuotes = [];
 
   void deleteQuote(int ind) async {
     setState(() {
@@ -44,11 +45,9 @@ class _FavQuotesState extends State<FavQuotes> {
     var width = size.width;
     var height = size.height;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('My Favourite Quotes'),
-        ),
+        appBar: AppBar(title: Text('My Favourite Quotes'), elevation: 20),
         backgroundColor: Colors.amber[100],
-        body: favQuotes!.isNotEmpty
+        body: favQuotes.isNotEmpty
             ? ListView.builder(
                 itemBuilder: (context, index) {
                   return Container(
@@ -65,7 +64,7 @@ class _FavQuotesState extends State<FavQuotes> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(bottom: height * 0.02),
-                            child: Text(favQuotes![index][0]),
+                            child: Text(favQuotes[index][0]),
                           ),
                           Padding(
                             padding: EdgeInsets.only(bottom: height * 0.03),
@@ -73,7 +72,7 @@ class _FavQuotesState extends State<FavQuotes> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    favQuotes![index][1],
+                                    favQuotes[index][1],
                                     style:
                                         TextStyle(fontStyle: FontStyle.italic),
                                   )
@@ -83,14 +82,29 @@ class _FavQuotesState extends State<FavQuotes> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
+                                  style: ButtonStyle(
+                                      elevation: MaterialStatePropertyAll(20)),
                                   onPressed: () => deleteQuote(index),
-                                  child: Text('Delete this Quote')),
+                                  child: Text('Remove this Quote')),
+                              ElevatedButton(
+                                  style: ButtonStyle(
+                                      elevation: MaterialStatePropertyAll(20)),
+                                  onPressed: () {
+                                    Share.share(
+                                        'Hey checkout this amazing quote: \'' +
+                                            favQuotes[index][0] +
+                                            '\'' +
+                                            ' (by ' +
+                                            favQuotes[index][1] +
+                                            ')');
+                                  },
+                                  child: Text('Share this Quote'))
                             ],
                           )
                         ]),
                   );
                 },
-                itemCount: favQuotes!.length,
+                itemCount: favQuotes.length,
               )
             : Center(
                 child: Text('Nothing to show'),
