@@ -15,7 +15,7 @@ class _FavQuotesState extends State<FavQuotes> {
 
   void deleteQuote(int ind) async {
     setState(() {
-      favQuotes!.removeAt(ind);
+      favQuotes.removeAt(ind);
     });
     var pref = await SharedPreferences.getInstance();
     var str = jsonEncode(favQuotes);
